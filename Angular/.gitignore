@@ -1,0 +1,5 @@
+dist/
+.frontend-gradle-plugin/
+.angular/
+node/
+node_modules/
