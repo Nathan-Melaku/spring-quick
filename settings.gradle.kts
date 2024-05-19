@@ -7,4 +7,4 @@ pluginManagement {
     }
 }
 
-include("backend", "Angular")
+include("backend", "Angular", "React")

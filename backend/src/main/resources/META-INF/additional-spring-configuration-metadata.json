@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "app.oauth.redirect-uri",
+      "type": "java.lang.String",
+      "description": "A landing url for redirection from successful oauth authentication."
+    },
+    {
+      "name": "app.cors.allowed-methods",
+      "type": "java.lang.String",
+      "description": "HTTP methods in the application that are allowed by CORS."
+    },
+    {
+      "name": "app.cors.allowed-origins",
+      "type": "java.lang.String",
+      "description": "Origins that are allowed by CORS ."
+    },
+    {
+      "name": "app.rsa.rsa-private-key",
+      "type": "java.lang.String",
+      "description": "Location of the private key for jwt."
+    },
+    {
+      "name": "app.rsa.rsa-public-key",
+      "type": "java.lang.String",
+      "description": "Location of the public key for jwt."
+    }
+  ]
+}

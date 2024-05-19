@@ -10,6 +10,6 @@ frontend {
     nodeInstallDirectory.set(file(rootProject.ext.get("nodeInstallDirectory")!!))
 }
 
-tasks.register<RunPnpm>("start") {
-    script.set("run start")
+tasks.register<RunPnpm>("dev") {
+    script.set("dev")
 }

@@ -27,7 +27,7 @@ dependencies {
     // SPRING
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    //implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     //implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
     // LOMBOK
@@ -62,18 +62,17 @@ tasks.register("prepareKotlinBuildScriptModel") {}
 
 tasks.register<Copy>("processFrontendResources") {
 
-    val frontendProjectDir = project(":Angular").layout.projectDirectory
-    val frontendDistDir = file("${frontendProjectDir}/dist/angular")
+    val frontendProjectDir = project(":React").layout.projectDirectory
+    val frontendDistDir = file("${frontendProjectDir}/dist")
     val frontendResourcesDir = project.layout.buildDirectory.dir("resources/main/static").get().asFile
-    println("frontend Build Dir: $frontendDistDir")
-    println("frontend Resources Dir: $frontendResourcesDir")
+
     group = "Frontend"
     description = "Generates resources for frontend"
-    dependsOn(":Angular:assembleFrontend")
+    dependsOn(":React:assembleFrontend")
     from(frontendDistDir)
     into(frontendResourcesDir)
 }
 
 tasks.named<Task>("processResources") {
-    dependsOn("processFrontendResources")
+    //dependsOn("processFrontendResources")
 }

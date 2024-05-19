@@ -1,0 +1,30 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: Ov23liEM0Px1eBOprz6G
+            client-secret: f50e03c2568e294c64569aebfd878079b4b6645d
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mydatabase
+    driver-class-name: org.postgresql.Driver
+    username: myuser
+    password: secret
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+app:
+  oauth:
+    redirect-uri: http://localhost:5173
+  cors:
+    allowed-methods:
+      - GET
+      - POST
+    allowed-origins:
+      - http://localhost:5173
+  rsa:
+    rsa-private-key: classpath:certs/private.pem
+    rsa-public-key: classpath:certs/public.pem
