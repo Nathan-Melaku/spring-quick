@@ -1,7 +1,8 @@
 package et.nate.backend.authentication.oauth;
 
+import et.nate.backend.authentication.AuthConstants;
 import et.nate.backend.authentication.jwt.JwtMintingService;
-import et.nate.backend.authentication.repository.RefreshTokenRepository;
+import et.nate.backend.data.repository.RefreshTokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,8 +44,8 @@ public class ExchangeTokenOAuthSuccessHandler extends SimpleUrlAuthenticationSuc
         var target = redirectUri.isBlank() ? determineTargetUrl(request, response) : redirectUri;
         var token = jwtMintingService.generateAccessToken(authentication);
         target = UriComponentsBuilder.fromUriString(target)
-                .queryParam("accessToken", token.accessToken())
-                .queryParam("refreshToken", token.refreshToken())
+                .queryParam(AuthConstants.ACCESS_TOKEN, token.accessToken())
+                .queryParam(AuthConstants.REFRESH_TOKEN, token.refreshToken())
                 .build().toUriString();
         getRedirectStrategy().sendRedirect(request, response, target);
     }

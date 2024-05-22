@@ -33,7 +33,7 @@ public class OAuthSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         var allowedEndpoints = securityConfigProperties.getAllowedEndpoints();
-        // TODO configure csrf
+
         httpSecurity
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())

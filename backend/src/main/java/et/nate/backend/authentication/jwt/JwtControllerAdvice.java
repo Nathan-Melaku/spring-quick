@@ -1,7 +1,7 @@
 package et.nate.backend.authentication.jwt;
 
-import et.nate.backend.authentication.dto.BadAuthenticationError;
-import et.nate.backend.authentication.exceptions.CustomJwtValidationException;
+
+import et.nate.backend.authentication.BadAuthenticationError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

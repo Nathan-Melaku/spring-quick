@@ -1,4 +1,4 @@
-package et.nate.backend.authentication.jwt;
+package et.nate.backend.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

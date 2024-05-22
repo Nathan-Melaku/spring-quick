@@ -1,4 +1,4 @@
-package et.nate.backend.authentication.model;
+package et.nate.backend.data.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

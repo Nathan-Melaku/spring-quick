@@ -1,26 +1,14 @@
 package et.nate.backend.authentication.jwt;
 
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.JWSVerificationKeySelector;
-import com.nimbusds.jose.proc.SecurityContext;
-import com.nimbusds.jwt.JWTClaimNames;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
-import com.nimbusds.jwt.proc.DefaultJWTProcessor;
-import et.nate.backend.authentication.AuthUtils;
-import et.nate.backend.authentication.dto.TokenDTO;
-import et.nate.backend.authentication.exceptions.CustomJwtValidationException;
-import et.nate.backend.authentication.model.RefreshToken;
-import et.nate.backend.authentication.model.User;
+import et.nate.backend.authentication.AuthConstants;
+import et.nate.backend.authentication.oauth.SocialLoginExtractor;
+import et.nate.backend.data.model.User;
 import et.nate.backend.authentication.oauth.UserInfoExtractor;
-import et.nate.backend.authentication.repository.RefreshTokenRepository;
-import et.nate.backend.authentication.repository.UserRepository;
+import et.nate.backend.data.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -56,9 +44,9 @@ public class JwtMintingService {
             var token = (OAuth2AuthenticationToken) authentication;
             var oAuth2User = (OAuth2User) token.getPrincipal();
             var registrationId = token.getAuthorizedClientRegistrationId();
-            user = AuthUtils.extractUser(oAuth2User, extractors, registrationId);
+            user = SocialLoginExtractor.extractUser(oAuth2User, extractors, registrationId);
         } else {
-            // Alternate authentication FORM or BASIC
+            // TODO Alternate authentication FORM or BASIC
             user = User.builder("email").build();
         }
 
@@ -83,11 +71,11 @@ public class JwtMintingService {
             });
         });
         var claims = JwtClaimsSet.builder()
-                .issuer(AuthUtils.ISSUER)
+                .issuer(AuthConstants.ISSUER)
                 .issuedAt(now)
                 .expiresAt(now.plus(accessTokenExpirationSeconds, ChronoUnit.SECONDS))
                 .subject(subject)
-                .claim("scope", scope)
+                .claim(AuthConstants.SCOPE, scope)
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
@@ -97,7 +85,7 @@ public class JwtMintingService {
         refreshTokenExpiresAt = now.plus(refreshTokenExpirationMinutes, ChronoUnit.MINUTES);
         refreshTokenCreatedAt = now;
         var claims = JwtClaimsSet.builder()
-                .issuer(AuthUtils.ISSUER)
+                .issuer(AuthConstants.ISSUER)
                 .issuedAt(Instant.now())
                 .expiresAt(refreshTokenExpiresAt)
                 .subject(email)

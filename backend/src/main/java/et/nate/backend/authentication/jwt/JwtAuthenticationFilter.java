@@ -1,7 +1,7 @@
 package et.nate.backend.authentication.jwt;
 
 import com.nimbusds.jwt.JWTClaimNames;
-import et.nate.backend.authentication.exceptions.CustomJwtValidationException;
+import et.nate.backend.authentication.AuthConstants;
 import et.nate.backend.config.SecurityConfigProperties;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -48,22 +48,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } else {
             // validate the token and authenticate.
             try {
-                var token = request.getHeader("Authorization");
+                var token = request.getHeader(AuthConstants.AUTHORIZATION_HEADER);
                 var claimSet = jwtValidationService.validate(token, new HashSet<>(Arrays.asList(
                         JWTClaimNames.SUBJECT,
                         JWTClaimNames.ISSUED_AT,
-                        "scope",
+                        AuthConstants.SCOPE,
                         JWTClaimNames.EXPIRATION_TIME)));
 
                 var privileges = new ArrayList<GrantedAuthority>();
-                stream(claimSet.getClaim("scope").toString().split(" ")).forEach(scope ->
+                stream(claimSet.getClaim(AuthConstants.SCOPE).toString().split(" ")).forEach(scope ->
                         privileges.add(new SimpleGrantedAuthority(scope))
                 );
                 var authentication = new UsernamePasswordAuthenticationToken(claimSet.getSubject(), null, privileges);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
             } catch (CustomJwtValidationException e) {
-                // do nothing the exception will be resolved in JwtControllerAdvice
+                // send an error message
+                request.setAttribute(AuthConstants.ERROR, e.getMessage());
             }
 
             filterChain.doFilter(request, response);

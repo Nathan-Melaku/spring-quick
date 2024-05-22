@@ -1,4 +1,4 @@
-package et.nate.backend.authentication.exceptions;
+package et.nate.backend.authentication.jwt;
 
 public class CustomJwtValidationException extends Throwable {
 

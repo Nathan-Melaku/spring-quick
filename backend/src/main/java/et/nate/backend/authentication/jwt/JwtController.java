@@ -1,7 +1,6 @@
 package et.nate.backend.authentication.jwt;
 
-import et.nate.backend.authentication.dto.TokenDTO;
-import et.nate.backend.authentication.exceptions.CustomJwtValidationException;
+import et.nate.backend.authentication.AuthConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -17,7 +16,7 @@ public class JwtController {
     private final JwtValidationService jwtValidationService;
 
     @PostMapping("/token/refresh")
-    public TokenDTO refreshToken(@RequestHeader(name = "Authorization") String refreshToken) throws CustomJwtValidationException {
+    public TokenDTO refreshToken(@RequestHeader(name = AuthConstants.AUTHORIZATION_HEADER) String refreshToken) throws CustomJwtValidationException {
         assert refreshToken != null;
         // check for token validity and
         var claims = jwtValidationService.validateRefreshToken(refreshToken);

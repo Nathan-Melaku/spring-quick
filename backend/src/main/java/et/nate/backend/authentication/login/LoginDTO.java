@@ -1,4 +1,4 @@
-package et.nate.backend.authentication.dto;
+package et.nate.backend.authentication.login;
 
 public record LoginDTO (
    String email,

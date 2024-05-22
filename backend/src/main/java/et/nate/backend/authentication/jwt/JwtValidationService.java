@@ -8,9 +8,9 @@ import com.nimbusds.jwt.JWTClaimNames;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
-import et.nate.backend.authentication.exceptions.CustomJwtValidationException;
-import et.nate.backend.authentication.model.RefreshToken;
-import et.nate.backend.authentication.repository.RefreshTokenRepository;
+import et.nate.backend.authentication.AuthConstants;
+import et.nate.backend.data.model.RefreshToken;
+import et.nate.backend.data.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,22 +28,22 @@ public class JwtValidationService {
 
     public JWTClaimsSet validate(String token, HashSet<String> claimsToValidate) throws CustomJwtValidationException {
         JWTClaimsSet claimsSet = null;
-        if (token != null && token.startsWith("Bearer ")) {
+        if (token != null && token.startsWith(AuthConstants.BEARER)) {
             var accessToken = token.substring(7);
             var jwtProcessor = new DefaultJWTProcessor<>();
             var keySelector = new JWSVerificationKeySelector<>(JWSAlgorithm.RS256, jwkSource);
             jwtProcessor.setJWSKeySelector(keySelector);
             jwtProcessor.setJWTClaimsSetVerifier(new DefaultJWTClaimsVerifier<>(
-                    new JWTClaimsSet.Builder().issuer("self").build(), claimsToValidate));
+                    new JWTClaimsSet.Builder().issuer(AuthConstants.ISSUER).build(), claimsToValidate));
             try {
                 claimsSet = jwtProcessor.process(accessToken, null);
             } catch (Exception e) {
-                throw new CustomJwtValidationException("Failed to validate JWT token", e);
+                throw new CustomJwtValidationException(AuthConstants.TOKEN_VALIDATION_ERROR, e);
             }
         }
 
         if (claimsSet == null) {
-            throw new CustomJwtValidationException("Invalid token");
+            throw new CustomJwtValidationException(AuthConstants.INVALID_TOKEN_ERROR);
         }
 
         return claimsSet;
@@ -62,7 +62,7 @@ public class JwtValidationService {
         var result = refreshTokenRepository.findRefreshTokenByToken(refreshToken);
 
         if (!result.isEmpty()) {
-            throw new CustomJwtValidationException("Refresh token reused");
+            throw new CustomJwtValidationException(AuthConstants.REFRESH_TOKEN_REUSED_ERROR);
         }
 
         refreshTokenRepository.save(new RefreshToken(

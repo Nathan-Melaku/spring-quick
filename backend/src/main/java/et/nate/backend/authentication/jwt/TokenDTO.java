@@ -1,4 +1,4 @@
-package et.nate.backend.authentication.dto;
+package et.nate.backend.authentication.jwt;
 
 public record TokenDTO(
         String accessToken,

@@ -1,4 +1,4 @@
-package et.nate.backend.authentication.exceptions;
+package et.nate.backend.authentication.oauth;
 
 import lombok.*;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;

@@ -9,8 +9,8 @@ export function AuthLogin() {
     const location = useLocation();
 
     useEffect(() => {
-        const accessToken = new URLSearchParams(location.search).get("accessToken");
-        const refreshToken = new URLSearchParams(location.search).get("refreshToken");
+        const accessToken = new URLSearchParams(location.search).get("access_token");
+        const refreshToken = new URLSearchParams(location.search).get("refresh_token");
 
         console.log(location.search)
         if (accessToken) {
