@@ -65,11 +65,10 @@ public class JwtMintingService {
     private String mintAccessToken(String subject) {
         var now = Instant.now();
         var scope = new ArrayList<String>();
-        userRepository.findByEmail(subject).ifPresent(user -> {
-            user.getRoles().forEach(role -> {
-                scope.add(role.getName());
-            });
-        });
+        userRepository.findByEmail(subject).ifPresent(user ->
+                user.getRoles().forEach(role ->
+                        scope.add(role.getName()))
+        );
         var claims = JwtClaimsSet.builder()
                 .issuer(AuthConstants.ISSUER)
                 .issuedAt(now)

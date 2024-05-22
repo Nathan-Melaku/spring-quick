@@ -1,10 +1,9 @@
 package et.nate.backend.authentication.oauth;
 
 import et.nate.backend.authentication.AuthConstants;
-import et.nate.backend.data.model.Privilege;
 import et.nate.backend.data.model.Role;
-import et.nate.backend.data.repository.UserRepository;
 import et.nate.backend.data.model.User;
+import et.nate.backend.data.repository.UserRepository;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;

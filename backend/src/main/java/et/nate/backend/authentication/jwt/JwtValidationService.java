@@ -12,7 +12,6 @@ import et.nate.backend.authentication.AuthConstants;
 import et.nate.backend.data.model.RefreshToken;
 import et.nate.backend.data.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -24,7 +23,6 @@ public class JwtValidationService {
 
     private final JWKSource<SecurityContext> jwkSource;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public JWTClaimsSet validate(String token, HashSet<String> claimsToValidate) throws CustomJwtValidationException {
         JWTClaimsSet claimsSet = null;
@@ -57,8 +55,8 @@ public class JwtValidationService {
                 JWTClaimNames.EXPIRATION_TIME)));
 
         // validate against the database.
+        // TODO try hashing the access token
         var refreshToken = token.substring(7);
-        //var hashed = bCryptPasswordEncoder.encode(refreshToken);
         var result = refreshTokenRepository.findRefreshTokenByToken(refreshToken);
 
         if (!result.isEmpty()) {

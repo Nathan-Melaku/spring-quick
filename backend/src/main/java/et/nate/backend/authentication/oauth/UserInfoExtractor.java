@@ -5,6 +5,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 public interface UserInfoExtractor {
 
-    public User extractUserInfo(OAuth2User user);
-    public boolean accepts(String registrationId);
+    User extractUserInfo(OAuth2User user);
+    boolean accepts(String registrationId);
 }
