@@ -4,13 +4,13 @@ plugins {
     id("io.spring.dependency-management") version "1.1.4"
     id("org.hibernate.orm") version "6.4.4.Final"
     id("org.graalvm.buildtools.native") version "0.9.28"
+    kotlin("jvm")
 }
 
 group = "et.nate"
 version = "0.0.1-SNAPSHOT"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
 }
 
 configurations {
@@ -46,6 +46,7 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.withType<Test> {
@@ -75,4 +76,7 @@ tasks.register<Copy>("processFrontendResources") {
 
 tasks.named<Task>("processResources") {
     //dependsOn("processFrontendResources")
+}
+kotlin {
+    jvmToolchain(21)
 }

@@ -3,7 +3,7 @@ export enum SocialLogin {
     GITHUB = "github",
 }
 
-export function getProviderRedirect(loginProvider: SocialLogin): string {
+function getProviderRedirect(loginProvider: SocialLogin): string {
     console.log(loginProvider)
     switch (loginProvider) {
         case SocialLogin.GITHUB:
@@ -12,4 +12,17 @@ export function getProviderRedirect(loginProvider: SocialLogin): string {
         default:
             return "";
     }
+}
+
+export function onSocialLogin(loginProvider: SocialLogin) {
+    window.location.href = getProviderRedirect(loginProvider);
+}
+
+export function handle(jwt: string | null) {
+    /*const val = jwt?.split('.').map(part => {
+           return atob(part);
+        }
+    )
+
+    console.log(val)*/
 }

@@ -1,3 +1,8 @@
 spring:
   application:
     name: Spring SAAS
+app:
+  security:
+    allowed-endpoints:
+      - "/api/auth/**"
+      - "/login/oauth2/code/github/**"

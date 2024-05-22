@@ -24,6 +24,21 @@
       "name": "app.rsa.rsa-public-key",
       "type": "java.lang.String",
       "description": "Location of the public key for jwt."
+    },
+    {
+      "name": "app.security.allowed-endpoints",
+      "type": "java.lang.String",
+      "description": "public api endpoints."
+    },
+    {
+      "name": "app.security.refresh-token-expiration-minutes",
+      "type": "java.lang.String",
+      "description": "expiration of refresh token in minutes."
+    },
+    {
+      "name": "app.security.access-token-expiration-seconds",
+      "type": "java.lang.String",
+      "description": "expiration of access token in seconds."
     }
   ]
 }

@@ -18,13 +18,23 @@ spring:
     show-sql: true
 app:
   oauth:
-    redirect-uri: http://localhost:5173
+    redirect-uri: http://localhost:5173/auth/login
   cors:
     allowed-methods:
-      - GET
-      - POST
+      - "GET"
+      - "POST"
+      - "PUT"
+      - "DELETE"
     allowed-origins:
-      - http://localhost:5173
+      - "*"
   rsa:
     rsa-private-key: classpath:certs/private.pem
     rsa-public-key: classpath:certs/public.pem
+  security:
+    access-token-expiration-seconds: 60
+    refresh-token-expiration-minutes: 60
+logging:
+  level:
+    root: warn
+#    org.springframework.security: trace
+    et.nate.backend: debug

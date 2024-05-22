@@ -4,14 +4,15 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import { SocialLogin, getProviderRedirect } from "@/utils/social-login.ts";
+import {SocialLogin, onSocialLogin} from "@/utils/social-login.ts";
+import {Link} from "react-router-dom";
 
 const loginSchema = z.object({
     email: z.string().email("Please use a valid email"),
     password: z.string().min(8).max(40),
 })
 
-const Login = () => {
+export function Login() {
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -23,14 +24,6 @@ const Login = () => {
     function onLogin(values: z.infer<typeof loginSchema>) {
         //form handle
         console.log(values)
-    }
-
-    function onSignUp() {
-        console.log("sign up");
-    }
-
-    function onSocialLogin(loginProvider: SocialLogin) {
-        window.location.href = getProviderRedirect(loginProvider);
     }
 
     return (
@@ -65,7 +58,9 @@ const Login = () => {
                             )}
                         />
                         <Button type="submit" className="w-full">Login</Button>
-                        <Button variant="link" className="w-full mt-2" onClick={onSignUp}>Create Account</Button>
+                        <Button variant="link" className="w-full mt-2">
+                            <Link to="/register">Create Account</Link>
+                        </Button>
                     </form>
                 </Form>
 
@@ -81,5 +76,3 @@ const Login = () => {
         </div>
     )
 }
-
-export default Login

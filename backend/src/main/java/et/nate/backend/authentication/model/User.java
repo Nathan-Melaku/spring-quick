@@ -1,5 +1,7 @@
 package et.nate.backend.authentication.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +10,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 @Data
 @Entity(name = "users")
 @Builder(builderMethodName = "internalBuilder")
@@ -16,7 +22,7 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String username;
@@ -43,14 +49,14 @@ public class User {
     @Column(name = "social-login-id")
     private String socialLoginId;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     Set<Role> roles;
 
-    public static UserBuilder builder(String email){
+    public static UserBuilder builder(String email) {
         return User.internalBuilder().email(email);
     }
 }
