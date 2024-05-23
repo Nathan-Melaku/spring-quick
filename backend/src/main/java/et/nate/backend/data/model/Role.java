@@ -1,25 +1,17 @@
 package et.nate.backend.data.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
-
-@Data
 @Entity(name = "roles")
+@Getter
+@Setter
+@Builder( builderMethodName = "internalBuilder")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder( builderMethodName = "internalBuilder")
+@ToString(exclude = {"users","privileges"})
 public class Role {
 
     @Id
@@ -41,5 +33,18 @@ public class Role {
 
     public static RoleBuilder builder(String name) {
         return Role.internalBuilder().name(name);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        Role role = (Role) o;
+        return this.id == role.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

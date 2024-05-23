@@ -1,25 +1,19 @@
 package et.nate.backend.data.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
-@Data
+
 @Entity(name = "users")
+@Getter
+@Setter
 @Builder(builderMethodName = "internalBuilder")
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@ToString(exclude = {"roles"})
+public class User extends AuditingMetadata {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,4 +53,18 @@ public class User {
     public static UserBuilder builder(String email) {
         return User.internalBuilder().email(email);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return this.id == user.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }
+

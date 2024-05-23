@@ -1,25 +1,18 @@
 package et.nate.backend.data.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
 
-@Data
 @Entity(name = "privileges")
+@Getter
+@Setter
+@Builder(builderMethodName = "internalBuilder")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(builderMethodName = "internalBuilder")
+@ToString(exclude = {"roles"})
 public class Privilege {
 
     @Id
@@ -34,5 +27,18 @@ public class Privilege {
 
     public static PrivilegeBuilder builder(String name) {
         return internalBuilder().name(name);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        Privilege privilege = (Privilege) o;
+        return this.id == privilege.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }
