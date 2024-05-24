@@ -1,5 +1,6 @@
 package et.nate.backend.config;
 
+import et.nate.backend.authentication.AuthConstants;
 import et.nate.backend.authentication.BadAuthenticationEntryPoint;
 import et.nate.backend.authentication.CsrfCookieFilter;
 import et.nate.backend.authentication.SpaCsrfTokenRequestHandler;
@@ -23,7 +24,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
-public class OAuthSecurityConfig {
+public class SecurityConfig {
 
     private final ExtractUserInfoOAuth2UserService extractUserInfoOAuth2UserService;
     private final ExchangeTokenOAuthSuccessHandler exchangeTokenOAuthSuccessHandler;
@@ -33,6 +34,8 @@ public class OAuthSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         var allowedEndpoints = securityConfigProperties.getAllowedEndpoints();
+        var adminEndpoints = securityConfigProperties.getAdminEndpoints();
+        var userEndpoints = securityConfigProperties.getUserEndpoints();
 
         httpSecurity
                 .csrf(csrf -> csrf
@@ -43,6 +46,8 @@ public class OAuthSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers(allowedEndpoints).permitAll()
+                                .requestMatchers(userEndpoints).hasAnyRole(AuthConstants.USER, AuthConstants.ADMIN)
+                                .requestMatchers(adminEndpoints).hasRole(AuthConstants.ADMIN)
                                 .anyRequest().authenticated())
                 .exceptionHandling(handler ->
                         handler.authenticationEntryPoint(new BadAuthenticationEntryPoint()))

@@ -46,8 +46,8 @@ public class JwtMintingService {
             var registrationId = token.getAuthorizedClientRegistrationId();
             user = SocialLoginExtractor.extractUser(oAuth2User, extractors, registrationId);
         } else {
-            // TODO Alternate authentication FORM or BASIC
-            user = User.builder("email").build();
+            // for jwt Authenticated user
+            user = User.builder(authentication.getName()).build();
         }
 
         var accessToken = mintAccessToken(user.getEmail());

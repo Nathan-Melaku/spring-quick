@@ -38,10 +38,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Do not process allowed Endpoints
         for (String endpoint : securityConfigProperties.getAllowedEndpoints()) {
-            if (endpoint.startsWith(uri)) {
-                byPass = true;
-                break;
+            if (endpoint.endsWith("/**")){
+                endpoint = endpoint.substring(0, endpoint.length() - 3);
+                if (uri.startsWith(endpoint)) {
+                    byPass = true;
+                    break;
+                }
+            } else {
+                if (uri.equals(endpoint)) {
+                    byPass = true;
+                    break;
+                }
             }
+
         }
         if (byPass) {
             filterChain.doFilter(request, response);
@@ -56,12 +65,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         JWTClaimNames.EXPIRATION_TIME)));
 
                 var privileges = new ArrayList<GrantedAuthority>();
-                stream(claimSet.getClaim(AuthConstants.SCOPE).toString().split(" ")).forEach(scope ->
+                var scopeRole = claimSet.getClaim(AuthConstants.SCOPE).toString()
+                        .replace("[", "")
+                        .replace("]", "")
+                        .split(" ");
+                stream(scopeRole).forEach(scope ->
                         privileges.add(new SimpleGrantedAuthority(scope))
                 );
                 var authentication = new UsernamePasswordAuthenticationToken(claimSet.getSubject(), null, privileges);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
             } catch (CustomJwtValidationException e) {
                 // send an error message
                 request.setAttribute(AuthConstants.ERROR, e.getMessage());

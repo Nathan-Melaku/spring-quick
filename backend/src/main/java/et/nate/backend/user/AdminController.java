@@ -6,16 +6,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/user")
-public class UserController {
+@RequestMapping("/api/admin")
+public class AdminController {
 
-    @GetMapping("/users")
-    public String getUsers() {
-        return "Success";
+    @GetMapping
+    public String admin() {
+        return "admin";
     }
 
-    @PostMapping("/users")
-    public String postUser() {
-        return "Success";
+    @PostMapping
+    public String adminPost() {
+        return "admin";
     }
 }

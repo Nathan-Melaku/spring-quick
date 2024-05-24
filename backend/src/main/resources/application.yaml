@@ -6,3 +6,7 @@ app:
     allowed-endpoints:
       - "/api/auth/**"
       - "/login/oauth2/code/github/**"
+    admin-endpoints:
+      - "/api/admin/**"
+    user-endpoints:
+      - "/api/user/**"

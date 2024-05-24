@@ -1,8 +1,10 @@
 package et.nate.backend.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import et.nate.backend.ApplicationError;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
@@ -15,10 +17,10 @@ public final class BadAuthenticationEntryPoint extends BasicAuthenticationEntryP
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         var error = (String ) request.getAttribute(AuthConstants.ERROR);
-        var errorObject = new BadAuthenticationError(
-                error,
-                HttpServletResponse.SC_UNAUTHORIZED,
-                null);
+        var errorObject = new ApplicationError(
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                HttpStatus.UNAUTHORIZED.value(),
+                error);
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         if (error != null) {

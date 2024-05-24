@@ -11,7 +11,9 @@ import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import et.nate.backend.authentication.AuthConstants;
 import et.nate.backend.data.model.RefreshToken;
 import et.nate.backend.data.repository.RefreshTokenRepository;
+import et.nate.backend.data.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -23,6 +25,8 @@ public class JwtValidationService {
 
     private final JWKSource<SecurityContext> jwkSource;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public JWTClaimsSet validate(String token, HashSet<String> claimsToValidate) throws CustomJwtValidationException {
         JWTClaimsSet claimsSet = null;
@@ -36,7 +40,7 @@ public class JwtValidationService {
             try {
                 claimsSet = jwtProcessor.process(accessToken, null);
             } catch (Exception e) {
-                throw new CustomJwtValidationException(AuthConstants.TOKEN_VALIDATION_ERROR, e);
+                throw new CustomJwtValidationException(e.getMessage(), AuthConstants.TOKEN_VALIDATION_ERROR);
             }
         }
 
@@ -54,12 +58,14 @@ public class JwtValidationService {
                 JWTClaimNames.ISSUED_AT,
                 JWTClaimNames.EXPIRATION_TIME)));
 
-        // validate against the database.
-        // TODO try hashing the access token
+        // to do an encoded token, add a oneToMany relationship between user and refreshToken
+        // get user from DB, and get refresh tokens from user, and check if the given token is found in this response
+        // using a password encoder if it is found throw exception.
+
         var refreshToken = token.substring(7);
         var result = refreshTokenRepository.findRefreshTokenByToken(refreshToken);
 
-        if (!result.isEmpty()) {
+        if (!result.isEmpty() ) {
             throw new CustomJwtValidationException(AuthConstants.REFRESH_TOKEN_REUSED_ERROR);
         }
 

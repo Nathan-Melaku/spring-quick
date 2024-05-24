@@ -31,10 +31,10 @@ app:
     rsa-private-key: classpath:certs/private.pem
     rsa-public-key: classpath:certs/public.pem
   security:
-    access-token-expiration-seconds: 60
+    access-token-expiration-seconds: 3600
     refresh-token-expiration-minutes: 60
 logging:
   level:
     root: warn
-#    org.springframework.security: trace
+    org.springframework.security: trace
     et.nate.backend: debug

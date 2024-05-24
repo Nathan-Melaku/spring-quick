@@ -39,6 +39,16 @@
       "name": "app.security.access-token-expiration-seconds",
       "type": "java.lang.String",
       "description": "expiration of access token in seconds."
+    },
+    {
+      "name": "app.security.admin-endpoints",
+      "type": "java.lang.String",
+      "description": "admin only endpoints."
+    },
+    {
+      "name": "app.security.user-endpoints",
+      "type": "java.lang.String",
+      "description": "user only endpoints."
     }
   ]
 }

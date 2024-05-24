@@ -6,13 +6,15 @@ import lombok.*;
 import java.util.Set;
 
 
-@Entity(name = "users")
+@Entity
+@Table( name = "users",
+        indexes = @Index(name = "email_ix", columnList = "email"))
 @Getter
 @Setter
 @Builder(builderMethodName = "internalBuilder")
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"roles"})
+@ToString(exclude = {"roles", "verificationTokens"})
 public class User extends AuditingMetadata {
 
     @Id
@@ -43,12 +45,19 @@ public class User extends AuditingMetadata {
     @Column(name = "social-login-id")
     private String socialLoginId;
 
+    @Embedded
+    private UserAddress address;
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     Set<Role> roles;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "verification_token_id", referencedColumnName = "id")
+    private VerificationToken verificationToken;
 
     public static UserBuilder builder(String email) {
         return User.internalBuilder().email(email);
