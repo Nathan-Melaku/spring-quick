@@ -14,7 +14,7 @@ import java.util.Set;
 @Builder(builderMethodName = "internalBuilder")
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"roles", "verificationTokens"})
+@ToString(exclude = {"roles", "verificationToken"})
 public class User extends AuditingMetadata {
 
     @Id
@@ -58,6 +58,9 @@ public class User extends AuditingMetadata {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "verification_token_id", referencedColumnName = "id")
     private VerificationToken verificationToken;
+
+    @OneToMany(targetEntity = RefreshToken.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<RefreshToken> refreshTokens;
 
     public static UserBuilder builder(String email) {
         return User.internalBuilder().email(email);

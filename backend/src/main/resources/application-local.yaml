@@ -16,6 +16,24 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+  mail:
+    host: localhost
+    port: 3025
+    username: nathan
+    password: nathan
+    protocol: smtp
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        debug: true
+        smtp:
+          debug: true
+          auth: true
+          starttls:
+            enable: true
+      tls-enabled: true
+      test-connection: false
 app:
   oauth:
     redirect-uri: http://localhost:5173/auth/login
@@ -33,6 +51,7 @@ app:
   security:
     access-token-expiration-seconds: 3600
     refresh-token-expiration-minutes: 60
+
 logging:
   level:
     root: warn

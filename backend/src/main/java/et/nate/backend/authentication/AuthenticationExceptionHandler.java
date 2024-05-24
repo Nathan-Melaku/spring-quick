@@ -15,7 +15,7 @@ public class AuthenticationExceptionHandler {
     /**
      * JWT validation might fail for access token and refresh token.
      * @param e: exception
-     * @return
+     * @return Response Entity with UNAUTHORIZED
      */
     @ExceptionHandler(CustomJwtValidationException.class)
     public ResponseEntity<ApplicationError> handleCustomJwtValidationException(CustomJwtValidationException e) {

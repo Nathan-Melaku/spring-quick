@@ -7,7 +7,6 @@ import et.nate.backend.authentication.registration.dto.RegistrationResponse;
 import et.nate.backend.authentication.registration.dto.VerificationResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +33,7 @@ public class RegistrationController {
      * @param token: verification Token to be verified
      * @param authentication: authentication object of the user
      * @return {@link RegistrationResponse}
-     * @throws RegistrationVerificationException
+     * @throws RegistrationVerificationException when verification failed
      */
     @PostMapping("/verify")
     public VerificationResponse verify(@RequestParam String token, Authentication authentication) throws RegistrationVerificationException {

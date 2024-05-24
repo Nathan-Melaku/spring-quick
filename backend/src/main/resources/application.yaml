@@ -1,6 +1,8 @@
 spring:
   application:
     name: Spring SAAS
+  mail:
+    host: localhost
 app:
   security:
     allowed-endpoints:

@@ -58,24 +58,40 @@ public class JwtValidationService {
                 JWTClaimNames.ISSUED_AT,
                 JWTClaimNames.EXPIRATION_TIME)));
 
-        // to do an encoded token, add a oneToMany relationship between user and refreshToken
-        // get user from DB, and get refresh tokens from user, and check if the given token is found in this response
-        // using a password encoder if it is found throw exception.
-
         var refreshToken = token.substring(7);
-        var result = refreshTokenRepository.findRefreshTokenByToken(refreshToken);
+        var user = userRepository.findByEmail(claimsSet.getSubject());
 
-        if (!result.isEmpty() ) {
+        if (user.isEmpty()) {
+            throw new CustomJwtValidationException(AuthConstants.INVALID_TOKEN_ERROR);
+        }
+
+        var refreshTokens = user.get().getRefreshTokens();
+
+        var result = refreshTokens.stream()
+                .anyMatch(t -> {
+                    System.out.println("Token: " + t.getToken());
+                    System.out.println("Refresh Token: " + refreshToken);
+
+                    System.out.println(passwordEncoder.matches(refreshToken, t.getToken()));
+                    return passwordEncoder.matches(refreshToken, t.getToken());
+                });
+
+        if (result) {
             throw new CustomJwtValidationException(AuthConstants.REFRESH_TOKEN_REUSED_ERROR);
         }
 
-        refreshTokenRepository.save(new RefreshToken(
+        var userDb = user.get();
+        refreshTokens.add(new RefreshToken(
                 0,
-                refreshToken,
+                passwordEncoder.encode(refreshToken),
                 claimsSet.getIssueTime().toInstant(),
                 claimsSet.getExpirationTime().toInstant()
         ));
 
+        userDb.setRefreshTokens(
+                refreshTokens);
+
+        userRepository.save(userDb);
         return claimsSet;
     }
 }
