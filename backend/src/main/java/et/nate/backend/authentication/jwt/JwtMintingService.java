@@ -2,8 +2,8 @@ package et.nate.backend.authentication.jwt;
 
 import et.nate.backend.authentication.AuthConstants;
 import et.nate.backend.authentication.oauth.SocialLoginExtractor;
-import et.nate.backend.data.model.User;
 import et.nate.backend.authentication.oauth.UserInfoExtractor;
+import et.nate.backend.data.model.User;
 import et.nate.backend.data.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -51,13 +53,13 @@ public class JwtMintingService {
         }
 
         var accessToken = mintAccessToken(user.getEmail());
-        var refreshToken = mintRefreshToken(user.getEmail());
+        var refreshToken = mintRefreshToken(user.getEmail(), null);
         return new TokenResult(accessToken, refreshToken, refreshTokenCreatedAt, refreshTokenExpiresAt);
     }
 
 
-    public TokenDTO generateRefreshToken(String email) {
-        var refreshToken = mintRefreshToken(email);
+    public TokenDTO generateRefreshToken(String email, Instant expiresAt) {
+        var refreshToken = mintRefreshToken(email, expiresAt);
         var accessToken = mintAccessToken(email);
         return new TokenDTO(accessToken, refreshToken);
     }
@@ -79,10 +81,15 @@ public class JwtMintingService {
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
-    private String mintRefreshToken(String email) {
+    // expiration date of new refresh token must not exceed the old one.
+    private String mintRefreshToken(String email, Instant expiresAt) {
         var now = Instant.now();
-        refreshTokenExpiresAt = now.plus(refreshTokenExpirationMinutes, ChronoUnit.MINUTES);
         refreshTokenCreatedAt = now;
+        if (expiresAt != null) {
+            refreshTokenExpiresAt = expiresAt;
+        } else {
+            refreshTokenExpiresAt = now.plus(refreshTokenExpirationMinutes, ChronoUnit.MINUTES);
+        }
         var claims = JwtClaimsSet.builder()
                 .issuer(AuthConstants.ISSUER)
                 .issuedAt(Instant.now())

@@ -68,13 +68,7 @@ public class JwtValidationService {
         var refreshTokens = user.get().getRefreshTokens();
 
         var result = refreshTokens.stream()
-                .anyMatch(t -> {
-                    System.out.println("Token: " + t.getToken());
-                    System.out.println("Refresh Token: " + refreshToken);
-
-                    System.out.println(passwordEncoder.matches(refreshToken, t.getToken()));
-                    return passwordEncoder.matches(refreshToken, t.getToken());
-                });
+                .anyMatch(t -> passwordEncoder.matches(refreshToken, t.getToken()));
 
         if (result) {
             throw new CustomJwtValidationException(AuthConstants.REFRESH_TOKEN_REUSED_ERROR);
@@ -88,9 +82,7 @@ public class JwtValidationService {
                 claimsSet.getExpirationTime().toInstant()
         ));
 
-        userDb.setRefreshTokens(
-                refreshTokens);
-
+        userDb.setRefreshTokens(refreshTokens);
         userRepository.save(userDb);
         return claimsSet;
     }

@@ -21,7 +21,7 @@ public class JwtController {
         // check for token validity and
         var claims = jwtValidationService.validateRefreshToken(refreshToken);
         // mint a new access and refresh token and add refresh token to database.
-        var tokens = jwtMintingService.generateRefreshToken(claims.getSubject());
+        var tokens = jwtMintingService.generateRefreshToken(claims.getSubject(), claims.getExpirationTime().toInstant());
         return new TokenDTO(tokens.accessToken(), tokens.refreshToken());
     }
 
