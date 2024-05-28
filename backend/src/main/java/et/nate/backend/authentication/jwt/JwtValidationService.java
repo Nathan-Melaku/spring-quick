@@ -10,7 +10,6 @@ import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import et.nate.backend.authentication.AuthConstants;
 import et.nate.backend.data.model.RefreshToken;
-import et.nate.backend.data.repository.RefreshTokenRepository;
 import et.nate.backend.data.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +23,6 @@ import java.util.HashSet;
 public class JwtValidationService {
 
     private final JWKSource<SecurityContext> jwkSource;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 

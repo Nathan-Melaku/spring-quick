@@ -11,7 +11,7 @@ import java.util.Set;
 @Builder( builderMethodName = "internalBuilder")
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = {"users","privileges"})
+@ToString(exclude = {"users"})
 public class Role {
 
     @Id
@@ -23,13 +23,6 @@ public class Role {
 
     @ManyToMany(mappedBy = "roles")
     Set<User> users;
-
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "role_privilege",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "privilege_id"))
-    private Set<Privilege> privileges;
 
     public static RoleBuilder builder(String name) {
         return Role.internalBuilder().name(name);
