@@ -58,7 +58,7 @@ public class JwtValidationService {
 
         // take the last 70 chars for bCrypt to work properly.
         var refreshToken = token.substring(token.length() - 70);
-        var user = userRepository.findByEmail(claimsSet.getSubject());
+        var user = userRepository.findById(Long.parseLong(claimsSet.getSubject()));
 
         var contextFromJWT = (String) claimsSet.getClaim(AuthConstants.USER_CONTEXT_REFRESH_COOKIE);
         var contextCookie = Arrays.stream(request.getCookies())

@@ -28,7 +28,7 @@ public class RegistrationService {
     private final ApplicationEventPublisher eventPublisher;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public void register(RegistrationRequest registrationRequest) throws UserAlreadyExistsException {
+    public long register(RegistrationRequest registrationRequest) throws UserAlreadyExistsException {
 
         if (userRepository.findByEmail(registrationRequest.email()).isPresent()) {
             throw new UserAlreadyExistsException();
@@ -53,11 +53,12 @@ public class RegistrationService {
             user.address(registrationRequest.address().toUserAddress());
         }
 
-        userRepository.save(user.build());
+        var userDb = userRepository.save(user.build());
         eventPublisher.publishEvent(new RegistrationCompletedEvent(
                 this,
                 verificationToken.getToken(),
                 registrationRequest.email())
         );
+        return userDb.getId();
     }
 }

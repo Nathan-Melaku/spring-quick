@@ -26,9 +26,8 @@ public class RegistrationController {
     @PostMapping("/auth/register")
     public RegistrationResponse register(@RequestBody @Valid RegistrationRequest registration, HttpServletResponse response) throws UserAlreadyExistsException {
 
-        registrationService.register(registration);
-
-        var tokens = jwtMintingService.generateAccessToken(new UsernamePasswordAuthenticationToken(registration.email(), registration.password()));
+        var id = registrationService.register(registration);
+        var tokens = jwtMintingService.generateAccessToken(new UsernamePasswordAuthenticationToken(registration.email(), registration.password()), id);
         setCookies(response, tokens);
         return new RegistrationResponse(tokens.accessToken(), tokens.refreshToken());
     }

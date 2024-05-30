@@ -25,7 +25,7 @@ public class LoginService {
             throw new BadCredentialsException(AuthConstants.BAD_CREDENTIALS);
         }
 
-        var tokens = jwtMintingService.generateAccessToken(new UsernamePasswordAuthenticationToken(email, password));
+        var tokens = jwtMintingService.generateAccessToken(new UsernamePasswordAuthenticationToken(email, password), user.get().getId());
 
         return new TokenResult(tokens.accessToken(), tokens.refreshToken(), tokens.userContextCookie(), tokens.accessExpiresAt(), tokens.refreshExpiresAt());
     }

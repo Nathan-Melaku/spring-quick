@@ -42,7 +42,7 @@ public class ExchangeTokenOAuthSuccessHandler extends SimpleUrlAuthenticationSuc
                           HttpServletResponse response,
                           Authentication authentication) throws IOException {
         var target = redirectUri.isBlank() ? determineTargetUrl(request, response) : redirectUri;
-        var token = jwtMintingService.generateAccessToken(authentication);
+        var token = jwtMintingService.generateAccessToken(authentication, 0);
         setCookies(response, token);
 
         target = UriComponentsBuilder.fromUriString(target)

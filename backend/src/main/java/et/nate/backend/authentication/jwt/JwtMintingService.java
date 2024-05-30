@@ -42,39 +42,39 @@ public class JwtMintingService {
     @Value("${app.security.refresh-token-expiration-minutes}")
     private int refreshTokenExpirationMinutes;
 
-    public TokenResult generateAccessToken(Authentication authentication) {
+    public TokenResult generateAccessToken(Authentication authentication, long id) {
         User user;
         if (Objects.requireNonNull(authentication) instanceof OAuth2AuthenticationToken) {
             var token = (OAuth2AuthenticationToken) authentication;
             var oAuth2User = (OAuth2User) token.getPrincipal();
             var registrationId = token.getAuthorizedClientRegistrationId();
             user = SocialLoginExtractor.extractUser(oAuth2User, extractors, registrationId);
-        } else {
-            // for jwt Authenticated user
-            user = User.builder(authentication.getName()).build();
+
+            var userDb = userRepository.findByEmail(user.getEmail());
+            assert userDb.isPresent();
+            id = userDb.get().getId();
         }
+
         var userFingerprint = getRandom();
         assert userFingerprint != null;
-        var accessToken = mintAccessToken(user.getEmail(), userFingerprint.hash);
-        var refreshToken = mintRefreshToken(user.getEmail(), null, userFingerprint.hash);
-        // add the cookie
+        var accessToken = mintAccessToken(id, userFingerprint.hash);
+        var refreshToken = mintRefreshToken(id, null, userFingerprint.hash);
         return new TokenResult(accessToken, refreshToken, userFingerprint.value, accessTokenExpirationSeconds, refreshTokenExpirationMinutes * 60);
     }
 
 
-    public TokenResult generateRefreshToken(String email, Instant expiresAt){
+    public TokenResult generateRefreshToken(Long id, Instant expiresAt) {
         var userFingerprint = getRandom();
         assert userFingerprint != null;
-        var refreshToken = mintRefreshToken(email, expiresAt, userFingerprint.hash);
-        var accessToken = mintAccessToken(email, userFingerprint.hash);
-        // add the cookie
-        return new TokenResult(accessToken, refreshToken, userFingerprint.value, accessTokenExpirationSeconds,refreshTokenExpirationMinutes * 60);
+        var refreshToken = mintRefreshToken(id, expiresAt, userFingerprint.hash);
+        var accessToken = mintAccessToken(id, userFingerprint.hash);
+        return new TokenResult(accessToken, refreshToken, userFingerprint.value, accessTokenExpirationSeconds, refreshTokenExpirationMinutes * 60);
     }
 
-    private String mintAccessToken(String subject, String userFingerprint) {
+    private String mintAccessToken(Long id, String userFingerprint) {
         var now = Instant.now();
         var scope = new ArrayList<String>();
-        userRepository.findByEmail(subject).ifPresent(user ->
+        userRepository.findById(id).ifPresent(user ->
                 user.getRoles().forEach(role ->
                         scope.add(role.getName()))
         );
@@ -82,7 +82,7 @@ public class JwtMintingService {
                 .issuer(AuthConstants.ISSUER)
                 .issuedAt(now)
                 .expiresAt(now.plus(accessTokenExpirationSeconds, ChronoUnit.SECONDS))
-                .subject(subject)
+                .subject(Long.toString(id))
                 .claim(AuthConstants.SCOPE, scope)
                 .claim(AuthConstants.USER_CONTEXT_COOKIE, userFingerprint)
                 .build();
@@ -90,7 +90,7 @@ public class JwtMintingService {
     }
 
     // expiration date of new refresh token must not exceed the old one.
-    private String mintRefreshToken(String email, Instant expiresAt, String userFingerprint) {
+    private String mintRefreshToken(Long id, Instant expiresAt, String userFingerprint) {
         var now = Instant.now();
         Instant refreshTokenExpiresAt;
         if (expiresAt != null) {
@@ -102,7 +102,7 @@ public class JwtMintingService {
                 .issuer(AuthConstants.ISSUER)
                 .issuedAt(Instant.now())
                 .expiresAt(refreshTokenExpiresAt)
-                .subject(email)
+                .subject(Long.toString(id))
                 .claim(AuthConstants.USER_CONTEXT_REFRESH_COOKIE, userFingerprint)
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

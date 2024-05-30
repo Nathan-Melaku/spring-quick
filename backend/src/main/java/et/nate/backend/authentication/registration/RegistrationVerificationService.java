@@ -21,8 +21,7 @@ public class RegistrationVerificationService {
     private final ApplicationEventPublisher eventPublisher;
 
     public void verifyToken(String token, Authentication authentication) throws RegistrationVerificationException {
-        System.out.println("VERIFICATION " + authentication.getName());
-        var user = userRepository.findByEmail(authentication.getName());
+        var user = userRepository.findById(Long.parseLong(authentication.getName()));
         if (user.isEmpty()) {
             throw new RegistrationVerificationException(AuthConstants.UNKNOWN_PROBLEM);
         }
@@ -58,7 +57,7 @@ public class RegistrationVerificationService {
                 UUID.randomUUID().toString(),
                 Instant.now().plus(1, ChronoUnit.DAYS));
 
-        var user = userRepository.findByEmail(authentication.getName());
+        var user = userRepository.findById(Long.parseLong(authentication.getName()));
 
 
         if (user.isEmpty()) {
