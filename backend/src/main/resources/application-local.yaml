@@ -58,3 +58,9 @@ logging:
     root: warn
     org.springframework.security: debug
     et.nate.backend: debug
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

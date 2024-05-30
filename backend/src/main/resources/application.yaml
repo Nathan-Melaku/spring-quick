@@ -8,7 +8,13 @@ app:
     allowed-endpoints:
       - "/api/auth/**"
       - "/login/oauth2/code/github/**"
+      - "/actuator/**"
+      - "/swagger-ui/**"
+      - "/api-docs/**"
     admin-endpoints:
       - "/api/admin/**"
     user-endpoints:
       - "/api/user/**"
+springdoc:
+  api-docs:
+    path: /api-docs
