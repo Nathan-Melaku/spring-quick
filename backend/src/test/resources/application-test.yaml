@@ -1,0 +1,45 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: Ov23liEM0Px1eBOprz6G
+            client-secret: f50e03c2568e294c64569aebfd878079b4b6645d
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+  mail:
+    host: 127.0.0.1
+    port: 3025
+    username: test
+    password: test
+    protocol: smtp
+    test-connection: false
+app:
+  oauth:
+    redirect-uri: http://localhost:5173/auth/login
+  cors:
+    allowed-methods:
+      - "GET"
+      - "POST"
+      - "PUT"
+      - "DELETE"
+    allowed-origins:
+      - "*"
+  rsa:
+    rsa-private-key: classpath:certs/private.pem
+    rsa-public-key: classpath:certs/public.pem
+  security:
+    access-token-expiration-seconds: 3600
+    refresh-token-expiration-minutes: 60
+
+logging:
+  level:
+    root: warn
+    org.springframework.security: debug
+    et.nate.backend: debug

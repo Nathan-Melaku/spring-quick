@@ -24,6 +24,7 @@ repositories {
 }
 
 dependencies {
+    val greenMailVersion = "2.0.1"
     // SPRING
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -47,7 +48,9 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
-    implementation(kotlin("stdlib-jdk8"))
+    testImplementation("com.icegreen:greenmail-junit5:${greenMailVersion}")
+    testImplementation("com.icegreen:greenmail-spring:${greenMailVersion}")
+
 }
 
 tasks.withType<Test> {
