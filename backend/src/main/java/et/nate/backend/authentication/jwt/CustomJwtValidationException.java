@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class CustomJwtValidationException extends Throwable {
+public class CustomJwtValidationException extends Exception {
 
     private String detail;
 
