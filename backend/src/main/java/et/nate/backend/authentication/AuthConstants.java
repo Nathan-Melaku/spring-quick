@@ -11,8 +11,8 @@ public interface AuthConstants {
     String TOKEN_EXPIRED = "Expired token";
     String UNKNOWN_PROBLEM = "Unknown Problem Happened";
 
-    String ACCESS_TOKEN = "access_token";
-    String REFRESH_TOKEN = "refresh_token";
+    String ACCESS_TOKEN = "accessToken";
+    String REFRESH_TOKEN = "refreshToken";
 
     String ACCESS_DENIED = "Access Denied";
     String AUTHORIZATION_HEADER = "Authorization";
@@ -38,4 +38,5 @@ public interface AuthConstants {
     String BAD_CREDENTIALS = "Bad credentials";
     String USER_CONTEXT_COOKIE = "__Secure-UserContext";
     String USER_CONTEXT_REFRESH_COOKIE = "__Secure-UserContext-Refresh";
+    String LOGIN_LINK_SENT = "login link sent";
 }

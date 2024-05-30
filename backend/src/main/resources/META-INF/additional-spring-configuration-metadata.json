@@ -49,6 +49,11 @@
       "name": "app.security.user-endpoints",
       "type": "java.lang.String",
       "description": "user only endpoints."
+    },
+    {
+      "name": "app.security.password-reset-expiration-hours",
+      "type": "java.lang.String",
+      "description": "password-reset-expiration time in hours."
     }
   ]
 }

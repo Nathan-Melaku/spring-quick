@@ -42,8 +42,8 @@ class RegistrationTests extends BackendApplicationTests {
         // assert response
         assertThat(res.getStatusCode().value()).isEqualTo(200);
         assertThat(res.getBody()).isNotNull();
-        assertThat(res.getBody().access_token()).isNotNull();
-        assertThat(res.getBody().refresh_token()).isNotNull();
+        assertThat(res.getBody().accessToken()).isNotNull();
+        assertThat(res.getBody().refreshToken()).isNotNull();
 
         // assert user creation in db
         var user = userRepository.findByEmail("nathan@nathan.com");
@@ -72,7 +72,7 @@ class RegistrationTests extends BackendApplicationTests {
         // register a user
         var registrationResponse = restTemplate.postForEntity("http://localhost:" + port + "/api/auth/register", registrationRequestHttpEntity, RegistrationResponse.class);
         assertThat(registrationResponse.getBody()).isNotNull();
-        var token = registrationResponse.getBody().access_token();
+        var token = registrationResponse.getBody().accessToken();
         assertThat(token).isNotNull();
         var headers = getHeaders();
         headers.set("Authorization", "Bearer " + token);

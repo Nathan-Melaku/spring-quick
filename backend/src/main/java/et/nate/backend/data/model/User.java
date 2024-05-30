@@ -18,7 +18,7 @@ import java.util.Set;
 public class User extends AuditingMetadata {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
     private String username;
@@ -58,6 +58,11 @@ public class User extends AuditingMetadata {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "verification_token_id", referencedColumnName = "id")
     private VerificationToken verificationToken;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "forgot_password_token_id", referencedColumnName = "id")
+    private ForgotPasswordToken forgotPasswordToken;
+
 
     @OneToMany(targetEntity = RefreshToken.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<RefreshToken> refreshTokens;

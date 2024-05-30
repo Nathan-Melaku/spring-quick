@@ -11,12 +11,12 @@ import lombok.Setter;
 
 import java.time.Instant;
 
-@Entity(name = "verification_token")
+@Entity(name = "forgot_password_token")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class VerificationToken {
+public class ForgotPasswordToken {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
@@ -29,8 +29,8 @@ public class VerificationToken {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || this.getClass() != o.getClass()) return false;
-        VerificationToken verificationToken = (VerificationToken) o;
-        return this.id == verificationToken.id;
+        ForgotPasswordToken forgotPasswordToken = (ForgotPasswordToken) o;
+        return this.id == forgotPasswordToken.id;
     }
 
     @Override

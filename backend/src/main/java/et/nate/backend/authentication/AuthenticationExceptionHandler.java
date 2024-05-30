@@ -6,6 +6,7 @@ import et.nate.backend.authentication.registration.RegistrationVerificationExcep
 import et.nate.backend.authentication.registration.UserAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,6 +41,12 @@ public class AuthenticationExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApplicationError> handleBadCredentialsException(BadCredentialsException e) {
+
+        var error = new ApplicationError(HttpStatus.BAD_REQUEST.getReasonPhrase(), HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(RegistrationVerificationException.class)
     public ResponseEntity<ApplicationError> handleRegistrationVerificationException(RegistrationVerificationException e) {
 
