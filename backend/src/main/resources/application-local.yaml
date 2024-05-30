@@ -55,5 +55,5 @@ app:
 logging:
   level:
     root: warn
-    org.springframework.security: trace
+    org.springframework.security: debug
     et.nate.backend: debug
