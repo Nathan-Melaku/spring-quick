@@ -2,9 +2,11 @@ package et.nate.backend.authentication.jwt;
 
 import com.nimbusds.jwt.JWTClaimNames;
 import et.nate.backend.authentication.AuthConstants;
+import et.nate.backend.authentication.AuthUtils;
 import et.nate.backend.config.SecurityConfigProperties;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -62,7 +64,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         JWTClaimNames.SUBJECT,
                         JWTClaimNames.ISSUED_AT,
                         AuthConstants.SCOPE,
+                        AuthConstants.USER_CONTEXT_COOKIE,
                         JWTClaimNames.EXPIRATION_TIME)));
+
+                var contextFromJWT = (String) claimSet.getClaim(AuthConstants.USER_CONTEXT_COOKIE);
+                var contextCookie = Arrays.stream(request.getCookies())
+                        .filter(c -> c.getName().equals(AuthConstants.USER_CONTEXT_COOKIE))
+                        .map(Cookie::getValue)
+                        .findFirst();
+
+                if (contextCookie.isEmpty() || AuthUtils.dontMatchContextHash(contextFromJWT, contextCookie.get())) {
+                    throw new CustomJwtValidationException(AuthConstants.INVALID_TOKEN_ERROR);
+                }
 
                 var privileges = new ArrayList<GrantedAuthority>();
                 var scopeRole = claimSet.getClaim(AuthConstants.SCOPE).toString()

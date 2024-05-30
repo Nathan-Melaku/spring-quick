@@ -2,7 +2,7 @@ package et.nate.backend.authentication.login;
 
 import et.nate.backend.authentication.AuthConstants;
 import et.nate.backend.authentication.jwt.JwtMintingService;
-import et.nate.backend.authentication.login.dto.LoginResponseDto;
+import et.nate.backend.authentication.jwt.TokenResult;
 import et.nate.backend.data.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,7 +18,7 @@ public class LoginService {
     private final PasswordEncoder passwordEncoder;
     private final JwtMintingService jwtMintingService;
 
-    public LoginResponseDto login(String email, String password) {
+    public TokenResult login(String email, String password) {
         var user = userRepository.findByEmail(email);
 
         if (user.isEmpty() || !passwordEncoder.matches(password, user.get().getPassword())) {
@@ -27,6 +27,6 @@ public class LoginService {
 
         var tokens = jwtMintingService.generateAccessToken(new UsernamePasswordAuthenticationToken(email, password));
 
-        return new LoginResponseDto(tokens.accessToken(), tokens.refreshToken());
+        return new TokenResult(tokens.accessToken(), tokens.refreshToken(), tokens.userContextCookie(), tokens.accessExpiresAt(), tokens.refreshExpiresAt());
     }
 }

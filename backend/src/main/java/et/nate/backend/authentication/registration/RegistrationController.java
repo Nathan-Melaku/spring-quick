@@ -5,11 +5,14 @@ import et.nate.backend.authentication.jwt.JwtMintingService;
 import et.nate.backend.authentication.registration.dto.RegistrationRequest;
 import et.nate.backend.authentication.registration.dto.RegistrationResponse;
 import et.nate.backend.authentication.registration.dto.VerificationResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import static et.nate.backend.authentication.AuthUtils.setCookies;
 
 @RestController
 @RequestMapping("/api")
@@ -21,10 +24,12 @@ public class RegistrationController {
     private final JwtMintingService jwtMintingService;
 
     @PostMapping("/auth/register")
-    public RegistrationResponse register(@RequestBody @Valid RegistrationRequest registration) throws UserAlreadyExistsException {
+    public RegistrationResponse register(@RequestBody @Valid RegistrationRequest registration, HttpServletResponse response) throws UserAlreadyExistsException {
 
         registrationService.register(registration);
+
         var tokens = jwtMintingService.generateAccessToken(new UsernamePasswordAuthenticationToken(registration.email(), registration.password()));
+        setCookies(response, tokens);
         return new RegistrationResponse(tokens.accessToken(), tokens.refreshToken());
     }
 

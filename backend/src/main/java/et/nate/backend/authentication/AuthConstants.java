@@ -36,4 +36,6 @@ public interface AuthConstants {
     String ADMIN = "ADMIN";
     String USER = "USER";
     String BAD_CREDENTIALS = "Bad credentials";
+    String USER_CONTEXT_COOKIE = "__Secure-UserContext";
+    String USER_CONTEXT_REFRESH_COOKIE = "__Secure-UserContext-Refresh";
 }

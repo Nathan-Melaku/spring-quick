@@ -29,7 +29,7 @@ public class RegistrationVerificationService {
 
         var verificationToken = user.get().getVerificationToken();
 
-        // token exists
+        // token doesn't exists
         if (verificationToken == null || !verificationToken.getToken().equals(token)) {
             throw new RegistrationVerificationException(AuthConstants.TOKEN_NOT_FOUND);
         }

@@ -16,6 +16,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
+import static et.nate.backend.authentication.AuthUtils.setCookies;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -41,6 +43,8 @@ public class ExchangeTokenOAuthSuccessHandler extends SimpleUrlAuthenticationSuc
                           Authentication authentication) throws IOException {
         var target = redirectUri.isBlank() ? determineTargetUrl(request, response) : redirectUri;
         var token = jwtMintingService.generateAccessToken(authentication);
+        setCookies(response, token);
+
         target = UriComponentsBuilder.fromUriString(target)
                 .queryParam(AuthConstants.ACCESS_TOKEN, token.accessToken())
                 .queryParam(AuthConstants.REFRESH_TOKEN, token.refreshToken())

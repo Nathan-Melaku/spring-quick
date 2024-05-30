@@ -16,9 +16,14 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,9 +42,6 @@ public class JwtMintingService {
     @Value("${app.security.refresh-token-expiration-minutes}")
     private int refreshTokenExpirationMinutes;
 
-    private Instant refreshTokenExpiresAt;
-    private Instant refreshTokenCreatedAt;
-
     public TokenResult generateAccessToken(Authentication authentication) {
         User user;
         if (Objects.requireNonNull(authentication) instanceof OAuth2AuthenticationToken) {
@@ -51,20 +53,25 @@ public class JwtMintingService {
             // for jwt Authenticated user
             user = User.builder(authentication.getName()).build();
         }
-
-        var accessToken = mintAccessToken(user.getEmail());
-        var refreshToken = mintRefreshToken(user.getEmail(), null);
-        return new TokenResult(accessToken, refreshToken, refreshTokenCreatedAt, refreshTokenExpiresAt);
+        var userFingerprint = getRandom();
+        assert userFingerprint != null;
+        var accessToken = mintAccessToken(user.getEmail(), userFingerprint.hash);
+        var refreshToken = mintRefreshToken(user.getEmail(), null, userFingerprint.hash);
+        // add the cookie
+        return new TokenResult(accessToken, refreshToken, userFingerprint.value, accessTokenExpirationSeconds, refreshTokenExpirationMinutes * 60);
     }
 
 
-    public TokenDTO generateRefreshToken(String email, Instant expiresAt) {
-        var refreshToken = mintRefreshToken(email, expiresAt);
-        var accessToken = mintAccessToken(email);
-        return new TokenDTO(accessToken, refreshToken);
+    public TokenResult generateRefreshToken(String email, Instant expiresAt){
+        var userFingerprint = getRandom();
+        assert userFingerprint != null;
+        var refreshToken = mintRefreshToken(email, expiresAt, userFingerprint.hash);
+        var accessToken = mintAccessToken(email, userFingerprint.hash);
+        // add the cookie
+        return new TokenResult(accessToken, refreshToken, userFingerprint.value, accessTokenExpirationSeconds,refreshTokenExpirationMinutes * 60);
     }
 
-    private String mintAccessToken(String subject) {
+    private String mintAccessToken(String subject, String userFingerprint) {
         var now = Instant.now();
         var scope = new ArrayList<String>();
         userRepository.findByEmail(subject).ifPresent(user ->
@@ -77,14 +84,15 @@ public class JwtMintingService {
                 .expiresAt(now.plus(accessTokenExpirationSeconds, ChronoUnit.SECONDS))
                 .subject(subject)
                 .claim(AuthConstants.SCOPE, scope)
+                .claim(AuthConstants.USER_CONTEXT_COOKIE, userFingerprint)
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
     // expiration date of new refresh token must not exceed the old one.
-    private String mintRefreshToken(String email, Instant expiresAt) {
+    private String mintRefreshToken(String email, Instant expiresAt, String userFingerprint) {
         var now = Instant.now();
-        refreshTokenCreatedAt = now;
+        Instant refreshTokenExpiresAt;
         if (expiresAt != null) {
             refreshTokenExpiresAt = expiresAt;
         } else {
@@ -95,7 +103,28 @@ public class JwtMintingService {
                 .issuedAt(Instant.now())
                 .expiresAt(refreshTokenExpiresAt)
                 .subject(email)
+                .claim(AuthConstants.USER_CONTEXT_REFRESH_COOKIE, userFingerprint)
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
+
+    private Fingerprint getRandom() {
+        var secureRandom = new SecureRandom();
+        byte[] randomFgp = new byte[50];
+        secureRandom.nextBytes(randomFgp);
+        var hexFormat = HexFormat.of();
+        var value = hexFormat.formatHex(randomFgp);
+
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] userFingerprintDigest = digest.digest(value.getBytes(StandardCharsets.UTF_8));
+            String userFingerprintHash = hexFormat.formatHex(userFingerprintDigest);
+            return new Fingerprint(value, userFingerprintHash);
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+    }
+
+    private record Fingerprint(String value, String hash) {
     }
 }
