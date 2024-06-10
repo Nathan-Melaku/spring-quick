@@ -29,7 +29,7 @@ import static java.util.Arrays.stream;
 /**
  * Authentication filter that will validate and give permission for a valid JWT Holder.
  * It will use allowed endpoints from application configuration. and a jwt validation service
- * A valid token needs the following properties:
+ * A valid token must meet the following properties:
  * <ul>
  *     <li>The following claims need to exist in the jwt</li>
  *     <ul>

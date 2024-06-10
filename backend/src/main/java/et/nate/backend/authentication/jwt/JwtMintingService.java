@@ -50,7 +50,7 @@ public class JwtMintingService {
      * method to generate access Tokens. Access tokens can be generated from two kinds of authentication.
      * <ul>
      *     <li><b>oauth:</b> when user authenticates with social media.</li>
-     *     <li><b>form:</b> when user authenticates with login or registration from</li>
+     *     <li><b>form:</b> when user authenticates with login or registration form</li>
      * </ul>
      * @param authentication could be of type {@link OAuth2AuthenticationToken} or {@link org.springframework.security.authentication.UsernamePasswordAuthenticationToken}
      * @param id database id of the user. when logging in through social media, this will be 0, and it will be overridden in this method.

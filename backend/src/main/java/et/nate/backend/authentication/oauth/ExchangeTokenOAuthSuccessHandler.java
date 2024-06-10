@@ -18,6 +18,11 @@ import java.io.IOException;
 
 import static et.nate.backend.authentication.AuthUtils.setCookies;
 
+/**
+ * A success handler class that will be triggered upon a successful oauth login with a social login method.
+ * it should generate tokens and adds them to the redirect link. and also sets the context cookie need for login.
+ * And then redirect the user to the redirect link provided in the configuration.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

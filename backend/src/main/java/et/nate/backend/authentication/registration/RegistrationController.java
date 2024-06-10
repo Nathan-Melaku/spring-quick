@@ -42,7 +42,6 @@ public class RegistrationController {
     @PostMapping("/verify")
     public VerificationResponse verify(@RequestParam String token, Authentication authentication) throws RegistrationVerificationException {
 
-        // verify token
         verificationService.verifyToken(token, authentication);
 
         return new VerificationResponse(AuthConstants.VERIFICATION_COMPLETED);

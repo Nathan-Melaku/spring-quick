@@ -6,6 +6,9 @@ import et.nate.backend.data.model.User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+/**
+ * An extractor implementation for GitHub.
+ */
 @Service
 public class GithubUserInfoExtractor implements UserInfoExtractor {
 

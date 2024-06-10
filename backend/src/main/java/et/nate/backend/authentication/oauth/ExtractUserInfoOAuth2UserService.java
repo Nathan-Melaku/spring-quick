@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * User detail service for Oauth user. Its main task is to save the user in DB after a successful login by the
+ * authentication provider, like GitHub ...
+ */
 @Service
 public class ExtractUserInfoOAuth2UserService extends DefaultOAuth2UserService {
 
