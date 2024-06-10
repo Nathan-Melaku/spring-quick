@@ -73,10 +73,11 @@ class RegistrationTests extends BackendApplicationTests {
         var registrationResponse = restTemplate.postForEntity("http://localhost:" + port + "/api/auth/register", registrationRequestHttpEntity, RegistrationResponse.class);
         assertThat(registrationResponse.getBody()).isNotNull();
         var token = registrationResponse.getBody().accessToken();
+
         assertThat(token).isNotNull();
         var headers = getHeaders();
         headers.set("Authorization", "Bearer " + token);
-
+        // todo should also add a cookie to pass
         // get verification token
         var user = userRepository.findByEmail("nathan@nathan.com");
         assertThat(user.isPresent()).isTrue();
