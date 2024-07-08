@@ -33,11 +33,11 @@ import static java.util.Arrays.stream;
  * <ul>
  *     <li>The following claims need to exist in the jwt</li>
  *     <ul>
- *         <li>{@link JWTClaimNames.SUBJECT }</li>
- *         <li>{@link JWTClaimNames.ISSUED_AT}</li>
- *         <li>{@link AuthConstants.SCOPE}</li>
- *         <li>{@link AuthConstants.USER_CONTEXT_COOKIE}</li>
- *         <li>{@link JWTClaimNames.EXPIRATION_TIME}</li>
+ *         <li>{JWTClaimNames.SUBJECT }</li>
+ *         <li>{JWTClaimNames.ISSUED_AT}</li>
+ *         <li>{AuthConstants.SCOPE}</li>
+ *         <li>{AuthConstants.USER_CONTEXT_COOKIE}</li>
+ *         <li>{JWTClaimNames.EXPIRATION_TIME}</li>
  *     </ul>
  *     <li>It should be signed by private key defined in {@link et.nate.backend.config.RSAKeyProperties}</li>
  *     <li>The hashed value of __Secure-UserContext cookie must match the one defined in the {@link AuthConstants.USER_CONTEXT_COOKIE} claim of jwt.
