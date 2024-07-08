@@ -3,3 +3,4 @@ dist/
 .angular/
 node/
 node_modules/
+pnpm-lock.yaml
