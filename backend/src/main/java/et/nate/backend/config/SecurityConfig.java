@@ -2,8 +2,8 @@ package et.nate.backend.config;
 
 import et.nate.backend.authentication.AuthConstants;
 import et.nate.backend.authentication.BadAuthenticationEntryPoint;
-import et.nate.backend.authentication.CsrfCookieFilter;
-import et.nate.backend.authentication.SpaCsrfTokenRequestHandler;
+import et.nate.backend.authentication.csrf.CsrfCookieFilter;
+import et.nate.backend.authentication.csrf.SpaCsrfTokenRequestHandler;
 import et.nate.backend.authentication.jwt.JwtAuthenticationFilter;
 import et.nate.backend.authentication.oauth.ExchangeTokenOAuthSuccessHandler;
 import et.nate.backend.authentication.oauth.ExtractUserInfoOAuth2UserService;

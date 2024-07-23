@@ -1,5 +1,6 @@
-package et.nate.backend.authentication;
+package et.nate.backend.authentication.csrf;
 
+import et.nate.backend.authentication.AuthConstants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

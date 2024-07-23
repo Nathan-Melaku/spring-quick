@@ -11,6 +11,7 @@ app:
       - "/actuator/**"
       - "/swagger-ui/**"
       - "/api-docs/**"
+      - "/csrf"
     admin-endpoints:
       - "/api/admin/**"
     user-endpoints:

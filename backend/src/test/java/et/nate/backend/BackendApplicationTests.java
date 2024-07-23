@@ -31,9 +31,9 @@ public class BackendApplicationTests {
     void contextLoads() {
     }
 
-    protected HttpHeaders getHeaders() {
+    protected HttpHeaders setCsrfCookie() {
         var httpHeaders = new HttpHeaders();
-        var req_headers = restTemplate.headForHeaders("http://localhost:" + port + "/api/register");
+        var req_headers = restTemplate.headForHeaders("http://localhost:" + port + "/csrf");
         var cookies = req_headers.get("Set-Cookie");
         assertThat(cookies).isNotNull();
         var XSRFToken = cookies.getFirst().split(";")[0].split("=")[1];

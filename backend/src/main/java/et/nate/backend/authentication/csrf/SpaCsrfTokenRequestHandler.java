@@ -1,4 +1,4 @@
-package et.nate.backend.authentication;
+package et.nate.backend.authentication.csrf;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

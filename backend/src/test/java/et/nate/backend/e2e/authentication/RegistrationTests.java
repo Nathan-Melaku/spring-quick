@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 
+import java.util.Objects;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RegistrationTests extends BackendApplicationTests {
@@ -33,7 +35,7 @@ class RegistrationTests extends BackendApplicationTests {
     void shouldRegisterUserGivenCorrectData() {
         // given
         greenMailBean.getGreenMail().setUser("test", "test");
-        HttpEntity<RegistrationRequest> req = new HttpEntity<>(registrationRequest, getHeaders());
+        HttpEntity<RegistrationRequest> req = new HttpEntity<>(registrationRequest, setCsrfCookie());
 
         // when
         var res = restTemplate.postForEntity("http://localhost:" + port + "/api/auth/register", req, RegistrationResponse.class);
@@ -68,20 +70,27 @@ class RegistrationTests extends BackendApplicationTests {
     void shouldVerifyRegisteredUserThroughAValidLinkWhenAuthenticated(){
         // given
         greenMailBean.getGreenMail().setUser("test", "test");
-        HttpEntity<RegistrationRequest> registrationRequestHttpEntity = new HttpEntity<>(registrationRequest, getHeaders());
+        HttpEntity<RegistrationRequest> registrationRequestHttpEntity = new HttpEntity<>(registrationRequest, setCsrfCookie());
         // register a user
         var registrationResponse = restTemplate.postForEntity("http://localhost:" + port + "/api/auth/register", registrationRequestHttpEntity, RegistrationResponse.class);
-        assertThat(registrationResponse.getBody()).isNotNull();
+        assert registrationResponse.getBody() != null;
         var token = registrationResponse.getBody().accessToken();
+        assert token != null;
 
-        assertThat(token).isNotNull();
-        var headers = getHeaders();
+        // set userContext and csrf cookie. This is done automatically by the browser in normal operation.
+        var setCookieHeader = registrationResponse.getHeaders().get("Set-Cookie");
+        assert setCookieHeader != null;
+        var headers = setCsrfCookie();
+        var contextCookieValue = setCookieHeader.getFirst().split(";")[0].split("=")[1];
+        var csrfCookie = Objects.requireNonNull(headers.get("Cookie")).getFirst();
         headers.set("Authorization", "Bearer " + token);
-        // todo should also add a cookie to pass
+        headers.set("Cookie", csrfCookie + ";" + AuthConstants.USER_CONTEXT_COOKIE + "=" + contextCookieValue);
+
         // get verification token
         var user = userRepository.findByEmail("nathan@nathan.com");
-        assertThat(user.isPresent()).isTrue();
+        assert user.isPresent();
         HttpEntity<String> verificationRequest = new HttpEntity<>(null, headers);
+
         // when
         var verificationResponse = restTemplate.postForEntity("http://localhost:" + port + "/api/verify?token=" + user.get().getVerificationToken().getToken() , verificationRequest, VerificationResponse.class);
 
