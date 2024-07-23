@@ -31,8 +31,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class JwtValidationServiceTests {
 
-    private static JWKSource<SecurityContext> jwkSource;
-
     @Mock
     private static UserRepository userRepository;
     @Mock
@@ -42,7 +40,7 @@ class JwtValidationServiceTests {
 
     @BeforeAll
     static void setUp() {
-        jwkSource = getJwkSource();
+        JWKSource<SecurityContext> jwkSource = getJwkSource();
         subject = new JwtValidationService(
                 jwkSource,
                 userRepository,
@@ -51,15 +49,56 @@ class JwtValidationServiceTests {
     }
 
     // if signature is wrong doesn't validate
+    @Test
+    void shouldNotValidateJwtGivenAnInvalidJwt() {
+        // Given
+        var token = "Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiMSIsIl9fU2VjdXJlLVVzZXJDb250ZXh0IjoiNTI3Y2ZiMDcxMDMxNTFkMGE4ZmQwY2I1MTg2OTZiZGJiNTZiOGVmYjdlOGU2OWI1NjVjYWJhMzFmZTIzNjBlYiIsImV4cCI6MzAxNzMwMTk1NCwiaWF0IjoxNzIxMzAxOTU0LCJzY29wZSI6WyJST0xFX1VOVkVSSUZJRUQiXX0.mm3CCJEWS5sQcwR21WRoD_87naL056DbBtEuB6t-RWJmGaUvdTvr1m9qYCwOnxIHKTPDZuvPSHY720A8M15bSL99KgWpRyntG2yQXu670DNgGx1MsvtqyHotBXFCiIgRzdUJ1U6QiMLnvJNCqCUztFLMgiTXkvWBT_lwU3WSfllbgkhuaJsokMhJJJSYruShbnTUqv5NY3khptyTgc4EX7Mkbe_c0OS-FWHiv4bAazJeU9ysadCMcqB3Yj2vhreOjaTmFBiJ9NyJF2U8mYTLzb7U6ZkJdek_PED3xTaez5cd0vrFR9iNhR6Xvwu3jYhIBt3gFxUsMpVtNv0Gp_4vIlnxwpYNxfBa7NywkFsaYf6esCGL0VkB2jZUsf8m1VsWWaTHR6X0wnayzS3KjEiAqGFW92pD9UBYR4dlG5HToAO5PFRz83yH4AjRVJfNPaUtOFB64ppxH9W22-bh0GuUs9dePaLuOqF4HFaOjrkN21TOaXPFi_spOtYWotvUyvDZl41BCPETfuQ1pIqTNqVdZvMknru7gRHw7bNl6n7J2yte84GcYkD7HPg5_O3ZeT_fAZoc149ikF-0SOe6vxsfBrud73OprY_4iQQfd8zBHTMGQR6bfIkuo2LSJ8svxECzGc1oQZRGcTYffxZOYCyoFSfJWACNB6Ob-d3PrpXJaA1";
+        var claims = new HashSet<>(Arrays.asList(
+                JWTClaimNames.SUBJECT,
+                JWTClaimNames.ISSUED_AT,
+                AuthConstants.SCOPE,
+                AuthConstants.USER_CONTEXT_COOKIE,
+                JWTClaimNames.EXPIRATION_TIME));
+        JWTClaimsSet claimsSet = null;
+
+        try {
+            // When
+            claimsSet = subject.validate(token, claims);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Then
+        assertThat(claimsSet).isNull();
+    }
 
     // if token header is not Bearer doesn't validate
+    @Test
+    void shouldNotValidateJwtGivenANonBearerJwt() {
+        // Given
+        var token = "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiMSIsIl9fU2VjdXJlLVVzZXJDb250ZXh0IjoiNTI3Y2ZiMDcxMDMxNTFkMGE4ZmQwY2I1MTg2OTZiZGJiNTZiOGVmYjdlOGU2OWI1NjVjYWJhMzFmZTIzNjBlYiIsImV4cCI6MzAxNzMwMTk1NCwiaWF0IjoxNzIxMzAxOTU0LCJzY29wZSI6WyJST0xFX1VOVkVSSUZJRUQiXX0.mm3CCJEWS5sQcwR21WRoD_87naL056DbBtEuB6t-RWJmGaUvdTvr1m9qYCwOnxIHKTPDZuvPSHY720A8M15bSL99KgWpRyntG2yQXu670DNgGx1MsvtqyHotBXFCiIgRzdUJ1U6QiMLnvJNCqCUztFLMgiTXkvWBT_lwU3WSfllbgkhuaJsokMhJJJSYruShbnTUqv5NY3khptyTgc4EX7Mkbe_c0OS-FWHiv4bAazJeU9ysadCMcqB3Yj2vhreOjaTmFBiJ9NyJF2U8mYTLzb7U6ZkJdek_PED3xTaez5cd0vrFR9iNhR6Xvwu3jYhIBt3gFxUsMpVtNv0Gp_4vIlnxwpYNxfBa7NywkFsaYf6esCGL0VkB2jZUsf8m1VsWWaTHR6X0wnayzS3KjEiAqGFW92pD9UBYR4dlG5HToAO5PFRz83yH4AjRVJfNPaUtOFB64ppxH9W22-bh0GuUs9dePaLuOqF4HFaOjrkN21TOaXPFi_spOtYWotvUyvDZl41BCPETfuQ1pIqTNqVdZvMknru7gRHw7bNl6n7J2yte84GcYkD7HPg5_O3ZeT_fAZoc149ikF-0SOe6vxsfBrud73OprY_4iQQfd8zBHTMGQR6bfIkuo2LSJ8svxECzGc1oQZRGcTYffxZOYCyoFSfJWACNB6Ob-d3PrpXJaAY";
+        var claims = new HashSet<>(Arrays.asList(
+                JWTClaimNames.SUBJECT,
+                JWTClaimNames.ISSUED_AT,
+                AuthConstants.SCOPE,
+                AuthConstants.USER_CONTEXT_COOKIE,
+                JWTClaimNames.EXPIRATION_TIME));
+        JWTClaimsSet claimsSet = null;
+
+        try {
+            // When
+            claimsSet = subject.validate(token, claims);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Then
+        assertThat(claimsSet).isNull();
+    }
 
     // if token doesn't contain all claims doesn't validate
-
     @Test
     void shouldValidateJwtGivenAValidJwt() {
         // Given
-        var token = "Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiMSIsIl9fU2VjdXJlLVVzZXJDb250ZXh0IjoiNWY3OWI1ZmY0OTc5ODZmNzVhYWZhNjgzZjMwMTFjMDBhYjY4MzQ5NDJlZTRlOTMyMTc1YWY0MWE1NmE3MmJjZCIsImV4cCI6MTcxODAwMjg3NSwiaWF0IjoxNzE3OTk5Mjc1LCJzY29wZSI6WyJST0xFX1VOVkVSSUZJRUQiXX0.qWeGoJZWe8CkRg_UBdowHVM2hyV0ww_nXcd5rk67zJHJofx4BvvQj-KLMxAFX6trvaBQnZQKOtKN5EE3T0e0zZ19mc_Iob9TB2HjAGyU-H5vxL-QBZabRNolqFMqIs0HXp1-41TwlPWh6Hqcw7EGZaIk1rCBdgqbH6CXQj4OUqd6PDkYMVmQSovnyBTEPsBP_mk-v-bi1UpGIcWN4xms6pp3khDh5hewvzi_4AbopfrZleW2YYQfSsGqg52naZGYjY4-3HOQA5B0OC2acfqtMKZdEPEbP0SeqvOiBf1I8Pk4SfMkh9v28Wp08LoW_bKRH9PBT_J4hGF1ywCCQWDW-M5FEyjA5BjDyMwXKEUIppJ7suCGRM-CvjaChWma2kYXuZe9NoYx2hcRHE8GBwJfO_30mEI9XDTYY6zW1vrMl0EFIReqTDPmxvQP9_5anE5dTiFvK_gIbOMGXjuDk9QM3E7j8Rvaj358t1F9clcyjObKsGelhfDSgmKbI7-1Az4v3oBEwMSdnrNjlU6mnfcqBbm8tXxt8nlMhRHlEi56UukFALhGzlIZrVaADJ__FtaaqsJGWu02agHNaMQsL7zFsgc-IO1De6ck8-VZ1UtuP6aaKuEovji5rnGQLXEatux51a4Ry2bXjrDasXiqMQUJUUhb0OTdiOQ3chAl3KoBx6c";
+        var token = "Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiMSIsIl9fU2VjdXJlLVVzZXJDb250ZXh0IjoiNTI3Y2ZiMDcxMDMxNTFkMGE4ZmQwY2I1MTg2OTZiZGJiNTZiOGVmYjdlOGU2OWI1NjVjYWJhMzFmZTIzNjBlYiIsImV4cCI6MzAxNzMwMTk1NCwiaWF0IjoxNzIxMzAxOTU0LCJzY29wZSI6WyJST0xFX1VOVkVSSUZJRUQiXX0.mm3CCJEWS5sQcwR21WRoD_87naL056DbBtEuB6t-RWJmGaUvdTvr1m9qYCwOnxIHKTPDZuvPSHY720A8M15bSL99KgWpRyntG2yQXu670DNgGx1MsvtqyHotBXFCiIgRzdUJ1U6QiMLnvJNCqCUztFLMgiTXkvWBT_lwU3WSfllbgkhuaJsokMhJJJSYruShbnTUqv5NY3khptyTgc4EX7Mkbe_c0OS-FWHiv4bAazJeU9ysadCMcqB3Yj2vhreOjaTmFBiJ9NyJF2U8mYTLzb7U6ZkJdek_PED3xTaez5cd0vrFR9iNhR6Xvwu3jYhIBt3gFxUsMpVtNv0Gp_4vIlnxwpYNxfBa7NywkFsaYf6esCGL0VkB2jZUsf8m1VsWWaTHR6X0wnayzS3KjEiAqGFW92pD9UBYR4dlG5HToAO5PFRz83yH4AjRVJfNPaUtOFB64ppxH9W22-bh0GuUs9dePaLuOqF4HFaOjrkN21TOaXPFi_spOtYWotvUyvDZl41BCPETfuQ1pIqTNqVdZvMknru7gRHw7bNl6n7J2yte84GcYkD7HPg5_O3ZeT_fAZoc149ikF-0SOe6vxsfBrud73OprY_4iQQfd8zBHTMGQR6bfIkuo2LSJ8svxECzGc1oQZRGcTYffxZOYCyoFSfJWACNB6Ob-d3PrpXJaAY";
         var claims = new HashSet<>(Arrays.asList(
                 JWTClaimNames.SUBJECT,
                 JWTClaimNames.ISSUED_AT,

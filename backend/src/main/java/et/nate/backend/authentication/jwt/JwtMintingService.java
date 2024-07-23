@@ -3,7 +3,6 @@ package et.nate.backend.authentication.jwt;
 import et.nate.backend.authentication.AuthConstants;
 import et.nate.backend.authentication.oauth.SocialLoginExtractor;
 import et.nate.backend.authentication.oauth.UserInfoExtractor;
-import et.nate.backend.data.model.User;
 import et.nate.backend.data.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,13 +57,13 @@ public class JwtMintingService {
      */
     public TokenResult generateAccessToken(Authentication authentication, long id) {
         log.trace("Generating access token for user: {}", authentication.getName());
-        User user;
+
         if (Objects.requireNonNull(authentication) instanceof OAuth2AuthenticationToken) {
             log.trace("Detected OAuth2AuthenticationToken, User logged in through Social Media");
             var token = (OAuth2AuthenticationToken) authentication;
             var oAuth2User = (OAuth2User) token.getPrincipal();
             var registrationId = token.getAuthorizedClientRegistrationId();
-            user = SocialLoginExtractor.extractUser(oAuth2User, extractors, registrationId);
+            var user = SocialLoginExtractor.extractUser(oAuth2User, extractors, registrationId);
             log.trace("Searching for user in Database");
             var userDb = userRepository.findByEmail(user.getEmail());
             assert userDb.isPresent();
