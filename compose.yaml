@@ -7,6 +7,8 @@ services:
       - 'POSTGRES_USER=myuser'
     ports:
       - '5432:5432'
+    networks:
+      - backend
   greenmail:
     image: greenmail/standalone:latest
     environment:
@@ -19,6 +21,8 @@ services:
       - 3993:3993 # IMAPS
       - 3995:3995 # POP3S
       - 8001:8080 # API
+    networks:
+      - backend
   roundcube:
     image: roundcube/roundcubemail:latest
     depends_on:
@@ -30,3 +34,7 @@ services:
       - ROUNDCUBEMAIL_DEFAULT_PORT=3143       # IMAP port
       - ROUNDCUBEMAIL_SMTP_SERVER=greenmail   # SMTP server - tls:// prefix for STARTTLS, ssl:// for SSL/TLS
       - ROUNDCUBEMAIL_SMTP_PORT=3025
+    networks:
+      - backend
+networks:
+  backend:

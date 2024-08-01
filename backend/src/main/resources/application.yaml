@@ -3,6 +3,8 @@ spring:
     name: Spring SAAS
   mail:
     host: localhost
+  profiles:
+    active: local
 app:
   security:
     allowed-endpoints:

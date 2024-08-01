@@ -4,13 +4,13 @@ spring:
       client:
         registration:
           github:
-            client-id: Ov23liEM0Px1eBOprz6G
-            client-secret: f50e03c2568e294c64569aebfd878079b4b6645d
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_SECRET}
   datasource:
     url: jdbc:postgresql://localhost:5432/mydatabase
     driver-class-name: org.postgresql.Driver
-    username: myuser
-    password: secret
+    username: ${DB_USER}
+    password: ${DB_PASS}
   jpa:
     generate-ddl: true
     hibernate:
